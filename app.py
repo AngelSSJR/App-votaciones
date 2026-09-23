@@ -5,9 +5,9 @@ app = Flask(__name__)
 
 # Configuración de conexión a MySQL
 app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'devuser'       # El usuario que creaste o el que tengas en Workbench
-app.config['MYSQL_PASSWORD'] = 'password123' # Tu contraseña configurada
-app.config['MYSQL_DB'] = 'app_db'          # El nombre del schema/base de datos
+app.config['MYSQL_USER'] = 'angel'       # El usuario que creaste o el que tengas en Workbench
+app.config['MYSQL_PASSWORD'] = 'Ar1081811844' # Tu contraseña configurada
+app.config['MYSQL_DB'] = 'appvotacione_db'          # El nombre del schema/base de datos
 
 mysql = MySQL(app)
 
