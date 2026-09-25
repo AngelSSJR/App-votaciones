@@ -4,8 +4,6 @@ from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, jsonify, request
 
-import random
-from werkzeug.security import generate_password_hash
 
 app = Flask(__name__)
 CORS(app) #permite peticiones desde react
