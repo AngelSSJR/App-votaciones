@@ -4,6 +4,9 @@ from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, jsonify, request
 
+import random
+from werkzeug.security import generate_password_hash
+
 app = Flask(__name__)
 CORS(app) #permite peticiones desde react
 
@@ -135,6 +138,82 @@ def registrar_voto():
         mysql.connection.rollback()
         cur.close()
         return jsonify({"error": "El usuario ya votó en esta mesa o hubo un error", "detalle": str(e)}), 400
+
+
+@app.route('/api/admin/generar_votantes', methods=['POST'])
+def generar_votantes():
+    try:
+        cur = mysql.connection.cursor()
+        usuarios_creados = 0
+        
+        # Generamos 20 usuarios ficticios
+        for i in range(1, 21):
+            dni = f"100000{i:02d}"  # Resultado: 10000001, 10000002...
+            nombre = f"Votante Ficticio {i}"
+            password = generate_password_hash("0000") # Clave genérica encriptada
+            mesa_aleatoria = random.randint(1, 5)  # Asigna una mesa del 1 al 5
+            
+            # INSERT IGNORE evita errores si ejecutas la ruta más de una vez
+            cur.execute("""
+                INSERT IGNORE INTO usuarios (dni, nombre, password, mesa_asignada) 
+                VALUES (%s, %s, %s, %s)
+            """, (dni, nombre, password, mesa_aleatoria))
+            
+            if cur.rowcount > 0:
+                usuarios_creados += 1
+                
+        mysql.connection.commit()
+        cur.close()
+        
+        return jsonify({
+            "mensaje": "Votantes generados con éxito",
+            "cantidad_nuevos": usuarios_creados
+        }), 201
+        
+    except Exception as e:
+        return jsonify({"error": "Fallo al generar votantes", "detalle": str(e)}), 500
+
+
+@app.route('/api/kiosco/verificar', methods=['POST'])
+def verificar_votante():
+    data = request.json or {}
+    dni = data.get('dni')
+    numero_mesa_kiosco = data.get('numero_mesa') # Enviado por el monitor de React
+
+    if not dni or not numero_mesa_kiosco:
+        return jsonify({"error": "DNI y número de mesa son requeridos"}), 400
+
+    cur = mysql.connection.cursor()
+    
+    # 1. Verificar si el DNI existe y obtener su mesa
+    cur.execute("SELECT id, nombre, mesa_asignada FROM usuarios WHERE dni = %s", (dni,))
+    usuario = cur.fetchone()
+
+    if not usuario:
+        cur.close()
+        return jsonify({"error": "DNI no registrado en el sistema."}), 404
+
+    # 2. Validar que esté en la mesa que le corresponde
+    if usuario['mesa_asignada'] != int(numero_mesa_kiosco):
+        cur.close()
+        return jsonify({
+            "error": f"Mesa incorrecta. Debe dirigirse a la mesa {usuario['mesa_asignada']}."
+        }), 403
+
+    # 3. Validar que no haya votado previamente
+    cur.execute("SELECT id FROM votos WHERE usuario_id = %s", (usuario['id'],))
+    voto_previo = cur.fetchone()
+    cur.close()
+
+    if voto_previo:
+        return jsonify({"error": "Alerta: Este usuario ya emitió su voto."}), 403
+
+    # Si pasa todas las validaciones, enviamos el OK para mostrar el tarjetón
+    return jsonify({
+        "mensaje": "Verificación exitosa. Puede proceder a votar.",
+        "usuario_id": usuario['id'],
+        "nombre": usuario['nombre']
+    }), 200
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
