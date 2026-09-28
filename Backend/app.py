@@ -1,32 +1,35 @@
 import random
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_mysqldb import MySQL
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import Flask, jsonify, request
-
 
 app = Flask(__name__)
-CORS(app) #permite peticiones desde react
+CORS(app)  # Permite peticiones desde React
 
 # Configuración de conexión a MySQL
 app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'angel'       #
-app.config['MYSQL_PASSWORD'] = 'Ar1081811844' 
-app.config['MYSQL_DB'] = 'appvotacione_db'          
+app.config['MYSQL_USER'] = 'angel'
+app.config['MYSQL_PASSWORD'] = 'Ar1081811844'
+app.config['MYSQL_DB'] = 'appvotacione_db'
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
 
 @app.route('/api/test', methods=['GET'])
 def test():
+    cur = None
     try:
         cur = mysql.connection.cursor()
         cur.execute("SELECT 1")
-        cur.close()
         return jsonify({"status": "ok", "message": "Conectado a MySQL"}), 200
     except Exception as e:
         return jsonify({"status": "error", "detail": str(e)}), 500
+    finally:
+        if cur:
+            cur.close()
+
 
 # ----------------- AUTENTICACIÓN -----------------
 @app.route('/api/registro', methods=['POST'])
@@ -35,24 +38,36 @@ def registro():
     dni = data.get('dni')
     nombre = data.get('nombre')
     password = data.get('password')
+    mesa_asignada = data.get('mesa_asignada')
 
     if not dni or not nombre or not password:
         return jsonify({"error": "Faltan datos requeridos"}), 400
 
+    # Si no se especifica mesa, se asigna una aleatoria del 1 al 5
+    if not mesa_asignada:
+        mesa_asignada = random.randint(1, 5)
+
     hashed_pw = generate_password_hash(password)
 
+    cur = mysql.connection.cursor()
     try:
-        cur = mysql.connection.cursor()
         cur.execute(
-            "INSERT INTO usuarios (dni, nombre, password) VALUES (%s, %s, %s)",
-            (dni, nombre, hashed_pw)
+            "INSERT INTO usuarios (dni, nombre, password, mesa_asignada) VALUES (%s, %s, %s, %s)",
+            (dni, nombre, hashed_pw, mesa_asignada)
         )
         mysql.connection.commit()
         user_id = cur.lastrowid
-        cur.close()
-        return jsonify({"mensaje": "Usuario registrado", "usuario_id": user_id}), 201
+        return jsonify({
+            "mensaje": "Usuario registrado",
+            "usuario_id": user_id,
+            "mesa_asignada": mesa_asignada
+        }), 201
     except Exception as e:
+        mysql.connection.rollback()
         return jsonify({"error": "DNI ya registrado o error de BD", "detalle": str(e)}), 400
+    finally:
+        cur.close()
+
 
 @app.route('/api/login', methods=['POST'])
 def login():
@@ -61,51 +76,57 @@ def login():
     password = data.get('password')
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT id, dni, nombre, password FROM usuarios WHERE dni = %s", (dni,))
-    user = cur.fetchone()
-    cur.close()
+    try:
+        cur.execute("SELECT id, dni, nombre, password FROM usuarios WHERE dni = %s", (dni,))
+        user = cur.fetchone()
 
-    if user and check_password_hash(user['password'], password):
-        return jsonify({
-            "mensaje": "Login exitoso",
-            "usuario": {"id": user['id'], "dni": user['dni'], "nombre": user['nombre']}
-        }), 200
-    return jsonify({"error": "Credenciales inválidas"}), 401
+        if user and check_password_hash(user['password'], password):
+            return jsonify({
+                "mensaje": "Login exitoso",
+                "usuario": {"id": user['id'], "dni": user['dni'], "nombre": user['nombre']}
+            }), 200
+        return jsonify({"error": "Credenciales inválidas"}), 401
+    finally:
+        cur.close()
+
 
 # ----------------- VOTACIONES Y CANDIDATOS -----------------
 @app.route('/api/votaciones', methods=['GET'])
 def listar_votaciones():
     cur = mysql.connection.cursor()
-    cur.execute("""
-        SELECT v.id AS votacion_id, v.titulo, v.descripcion, v.fecha_inicio, v.fecha_fin,
-               o.id AS opcion_id, o.texto, o.votos
-        FROM votaciones v
-        LEFT JOIN opciones o ON v.id = o.votacion_id
-    """)
-    rows = cur.fetchall()
-    cur.close()
+    try:
+        cur.execute("""
+            SELECT v.id AS votacion_id, v.titulo, v.descripcion, v.fecha_inicio, v.fecha_fin,
+                   o.id AS opcion_id, o.texto, o.votos
+            FROM votaciones v
+            LEFT JOIN opciones o ON v.id = o.votacion_id
+        """)
+        rows = cur.fetchall()
 
-    # Agrupar opciones dentro de su votación correspondiente
-    votaciones = {}
-    for r in rows:
-        vid = r['votacion_id']
-        if vid not in votaciones:
-            votaciones[vid] = {
-                "id": vid,
-                "titulo": r['titulo'],
-                "descripcion": r['descripcion'],
-                "fecha_inicio": r['fecha_inicio'],
-                "fecha_fin": r['fecha_fin'],
-                "opciones": []
-            }
-        if r['opcion_id']:
-            votaciones[vid]['opciones'].append({
-                "id": r['opcion_id'],
-                "texto": r['texto'],
-                "votos": r['votos']
-            })
+        # Agrupar opciones dentro de su votación correspondiente
+        votaciones = {}
+        for r in rows:
+            vid = r['votacion_id']
+            if vid not in votaciones:
+                votaciones[vid] = {
+                    "id": vid,
+                    "titulo": r['titulo'],
+                    "descripcion": r['descripcion'],
+                    "fecha_inicio": r['fecha_inicio'],
+                    "fecha_fin": r['fecha_fin'],
+                    "opciones": []
+                }
+            if r.get('opcion_id'):
+                votaciones[vid]['opciones'].append({
+                    "id": r['opcion_id'],
+                    "texto": r['texto'],
+                    "votos": r['votos']
+                })
 
-    return jsonify(list(votaciones.values())), 200
+        return jsonify(list(votaciones.values())), 200
+    finally:
+        cur.close()
+
 
 # ----------------- EMITIR VOTO -----------------
 @app.route('/api/votar', methods=['POST'])
@@ -120,99 +141,127 @@ def registrar_voto():
 
     cur = mysql.connection.cursor()
     try:
-        # 1. Registrar el voto en la tabla votos
+        # 1. Validar existencia del usuario
+        cur.execute("SELECT id FROM usuarios WHERE id = %s", (usuario_id,))
+        if not cur.fetchone():
+            return jsonify({"error": "El usuario especificado no existe"}), 404
+
+        # 2. Validar que el usuario no haya votado previamente
+        cur.execute("SELECT id FROM votos WHERE usuario_id = %s", (usuario_id,))
+        if cur.fetchone():
+            return jsonify({"error": "Alerta: Este usuario ya emitió su voto."}), 403
+
+        # 3. Validar existencia de la opción/candidato
+        cur.execute("SELECT id FROM opciones WHERE id = %s", (opcion_id,))
+        if not cur.fetchone():
+            return jsonify({"error": "La opción seleccionada no existe"}), 404
+
+        # 4. Registrar el voto en la tabla votos
         cur.execute(
             "INSERT INTO votos (usuario_id, opcion_id, numero_mesa) VALUES (%s, %s, %s)",
             (usuario_id, opcion_id, numero_mesa)
         )
-        # 2. Incrementar el contador en la tabla opciones
+        # 5. Incrementar el contador en la tabla opciones
         cur.execute(
             "UPDATE opciones SET votos = votos + 1 WHERE id = %s",
             (opcion_id,)
         )
         mysql.connection.commit()
-        cur.close()
         return jsonify({"mensaje": "Voto registrado exitosamente"}), 201
     except Exception as e:
         mysql.connection.rollback()
+        return jsonify({"error": "Error al registrar el voto", "detalle": str(e)}), 400
+    finally:
         cur.close()
-        return jsonify({"error": "El usuario ya votó en esta mesa o hubo un error", "detalle": str(e)}), 400
 
 
 @app.route('/api/admin/generar_votantes', methods=['POST'])
 def generar_votantes():
+    cur = mysql.connection.cursor()
     try:
-        cur = mysql.connection.cursor()
         usuarios_creados = 0
-        
+
         # Generamos 20 usuarios ficticios
         for i in range(1, 21):
             dni = f"100000{i:02d}"  # Resultado: 10000001, 10000002...
             nombre = f"Votante Ficticio {i}"
-            password = generate_password_hash("0000") # Clave genérica encriptada
+            password = generate_password_hash("0000")  # Clave genérica encriptada
             mesa_aleatoria = random.randint(1, 5)  # Asigna una mesa del 1 al 5
-            
+
             # INSERT IGNORE evita errores si ejecutas la ruta más de una vez
             cur.execute("""
                 INSERT IGNORE INTO usuarios (dni, nombre, password, mesa_asignada) 
                 VALUES (%s, %s, %s, %s)
             """, (dni, nombre, password, mesa_aleatoria))
-            
+
             if cur.rowcount > 0:
                 usuarios_creados += 1
-                
+
         mysql.connection.commit()
-        cur.close()
-        
+
         return jsonify({
             "mensaje": "Votantes generados con éxito",
             "cantidad_nuevos": usuarios_creados
         }), 201
-        
+
     except Exception as e:
+        mysql.connection.rollback()
         return jsonify({"error": "Fallo al generar votantes", "detalle": str(e)}), 500
+    finally:
+        cur.close()
 
 
 @app.route('/api/kiosco/verificar', methods=['POST'])
 def verificar_votante():
     data = request.json or {}
     dni = data.get('dni')
-    numero_mesa_kiosco = data.get('numero_mesa') # Enviado por el monitor de React
+    numero_mesa_kiosco = data.get('numero_mesa')  # Enviado por el monitor de React
 
-    if not dni or not numero_mesa_kiosco:
+    if not dni or numero_mesa_kiosco is None:
         return jsonify({"error": "DNI y número de mesa son requeridos"}), 400
 
+    try:
+        mesa_kiosco_int = int(numero_mesa_kiosco)
+    except (ValueError, TypeError):
+        return jsonify({"error": "El número de mesa del kiosco debe ser un valor numérico válido"}), 400
+
     cur = mysql.connection.cursor()
-    
-    # 1. Verificar si el DNI existe y obtener su mesa
-    cur.execute("SELECT id, nombre, mesa_asignada FROM usuarios WHERE dni = %s", (dni,))
-    usuario = cur.fetchone()
+    try:
+        # 1. Verificar si el DNI existe y obtener su mesa
+        cur.execute("SELECT id, nombre, mesa_asignada FROM usuarios WHERE dni = %s", (dni,))
+        usuario = cur.fetchone()
 
-    if not usuario:
-        cur.close()
-        return jsonify({"error": "DNI no registrado en el sistema."}), 404
+        if not usuario:
+            return jsonify({"error": "DNI no registrado en el sistema."}), 404
 
-    # 2. Validar que esté en la mesa que le corresponde
-    if usuario['mesa_asignada'] != int(numero_mesa_kiosco):
-        cur.close()
+        # 2. Validar que tenga mesa asignada y que corresponda a este kiosco
+        mesa_usuario = usuario.get('mesa_asignada')
+        if mesa_usuario is None:
+            return jsonify({
+                "error": "El elector no tiene una mesa asignada en el censo. Por favor consulte con un jurado."
+            }), 403
+
+        if mesa_usuario != mesa_kiosco_int:
+            return jsonify({
+                "error": f"Mesa incorrecta. Debe dirigirse a la mesa {mesa_usuario}."
+            }), 403
+
+        # 3. Validar que no haya votado previamente
+        cur.execute("SELECT id FROM votos WHERE usuario_id = %s", (usuario['id'],))
+        voto_previo = cur.fetchone()
+
+        if voto_previo:
+            return jsonify({"error": "Alerta: Este usuario ya emitió su voto."}), 403
+
+        # Si pasa todas las validaciones, enviamos el OK para mostrar el tarjetón
         return jsonify({
-            "error": f"Mesa incorrecta. Debe dirigirse a la mesa {usuario['mesa_asignada']}."
-        }), 403
+            "mensaje": "Verificación exitosa. Puede proceder a votar.",
+            "usuario_id": usuario['id'],
+            "nombre": usuario['nombre']
+        }), 200
+    finally:
+        cur.close()
 
-    # 3. Validar que no haya votado previamente
-    cur.execute("SELECT id FROM votos WHERE usuario_id = %s", (usuario['id'],))
-    voto_previo = cur.fetchone()
-    cur.close()
-
-    if voto_previo:
-        return jsonify({"error": "Alerta: Este usuario ya emitió su voto."}), 403
-
-    # Si pasa todas las validaciones, enviamos el OK para mostrar el tarjetón
-    return jsonify({
-        "mensaje": "Verificación exitosa. Puede proceder a votar.",
-        "usuario_id": usuario['id'],
-        "nombre": usuario['nombre']
-    }), 200
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
