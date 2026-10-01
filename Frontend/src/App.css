@@ -30,18 +30,29 @@
 }
 
 .btn-continuar {
-  padding: 15px;
+  padding: 16px 32px;
   font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
   cursor: pointer;
-  background-color: #007BFF;
+  background: linear-gradient(135deg, #007BFF, #0056b3);
   color: white;
   border: none;
-  border-radius: 5px;
-  transition: background-color 0.3s;
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.25);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  outline: none;
 }
 
 .btn-continuar:hover {
-  background-color: #0056b3;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+  background: linear-gradient(135deg, #0088ff, #004da3);
+}
+
+.btn-continuar:active {
+  transform: translateY(-1px) scale(0.98);
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
 }
 
 .tarjeta-eleccion {
