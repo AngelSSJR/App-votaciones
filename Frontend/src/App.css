@@ -1,111 +1,111 @@
-.kiosco-container {
-  font-family: Arial, sans-serif;
-  max-width: 600px;
-  margin: 50px auto;
-  text-align: center;
-  animation: fadeInSlide 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.error-alerta {
-  color: red;
-  margin: 20px 0;
-  padding: 10px;
-  border: 1px solid red;
-  border-radius: 5px;
-}
-
-.formulario-dni {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  animation: fadeInSlide 0.6s ease-out forwards;
-}
-
-.input-dni {
-  padding: 15px;
-  font-size: 18px;
-  text-align: center;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.btn-continuar {
-  padding: 16px 32px;
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  background: linear-gradient(135deg, #007BFF, #0056b3);
-  color: white;
-  border: none;
-  border-radius: 50px;
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.25);
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  outline: none;
-}
-
-.btn-continuar:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
-  background: linear-gradient(135deg, #0088ff, #004da3);
-}
-
-.btn-continuar:active {
-  transform: translateY(-1px) scale(0.98);
-  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
-}
-
-.tarjeta-eleccion {
-  border: 1px solid #ccc;
-  padding: 20px;
-  margin-top: 20px;
-  border-radius: 8px;
-}
-
-.contenedor-opciones {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.btn-votar {
-  padding: 20px;
-  font-size: 16px;
-  cursor: pointer;
-  background-color: #28A745;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  transition: background-color 0.3s;
-}
-
-.btn-votar:hover {
-  background-color: #218838;
-}
-
-.mensaje-exito {
-  background-color: #D4EDDA;
-  color: #155724;
-  padding: 40px;
-  border-radius: 10px;
-  margin-top: 50px;
-}
-
-.texto-reinicio {
-  font-size: 12px;
-  margin-top: 20px;
-  opacity: 0.8;
-}
-
-@keyframes fadeInSlide {
-  from {
-    opacity: 0;
-    transform: translateY(25px);
+  .kiosco-container {
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: 50px auto;
+    text-align: center;
+    animation: fadeInSlide 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .error-alerta {
+    color: red;
+    margin: 20px 0;
+    padding: 10px;
+    border: 1px solid red;
+    border-radius: 5px;
   }
-}
+
+  .formulario-dni {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    animation: fadeInSlide 0.6s ease-out forwards;
+  }
+
+  .input-dni {
+    padding: 15px;
+    font-size: 18px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  .btn-continuar {
+    padding: 16px 32px;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #007BFF, #0056b3);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.25);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    outline: none;
+  }
+
+  .btn-continuar:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+    background: linear-gradient(135deg, #0088ff, #004da3);
+  }
+
+  .btn-continuar:active {
+    transform: translateY(-1px) scale(0.98);
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+  }
+
+  .tarjeta-eleccion {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+  }
+
+  .contenedor-opciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .btn-votar {
+    padding: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #28A745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+
+  .btn-votar:hover {
+    background-color: #218838;
+  }
+
+  .mensaje-exito {
+    background-color: #D4EDDA;
+    color: #155724;
+    padding: 40px;
+    border-radius: 10px;
+    margin-top: 50px;
+  }
+
+  .texto-reinicio {
+    font-size: 12px;
+    margin-top: 20px;
+    opacity: 0.8;
+  }
+
+  @keyframes fadeInSlide {
+    from {
+      opacity: 0;
+      transform: translateY(25px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
