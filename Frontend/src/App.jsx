@@ -205,4 +205,8 @@ function App() {
   );
 }
 
+<footer className="kiosco-footer">
+  <p></p>
+</footer>
+
 export default App;
