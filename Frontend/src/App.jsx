@@ -10,6 +10,20 @@
     const [cargando, setCargando] = useState(false);
     const [votante, setVotante] = useState(null);
     const [votaciones, setVotaciones] = useState([]);
+    const [modoOscuro, setModoOscuro] =useState(() => {return localStorage.getItem("tema") === "dark";});
+
+    useEffect(() => {
+      if (modoOscuro) {
+        document.body.classList.add("dark-mode");
+        localStorage.setItem("tema", "dark");
+      } else {
+        document.body.classList.remove("dark-mode");
+        localStorage.setItem("tema", "light");
+      }
+    }, [modoOscuro]);
+
+    const toggleModoOscuro = () => setModoOscuro((prev) => !prev);
+
 
     // Limpieza segura del temporizador de reinicio en Fase 3
     useEffect(() => {
@@ -128,6 +142,15 @@
 
     return (
       <div className="kiosco-container">
+        <button
+          type="button"
+          onClick={toggleModoOscuro}
+          className="btn-tema"
+          title={modoOscuro ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
+          >
+            {modoOscuro ? "Claro" : "Oscuro"}
+          </button>
+
         <h1>Sistema de Votación Rápida</h1>
         <h3>Mesa #{NUMERO_MESA_KIOSCO}</h3>
 
