@@ -99,6 +99,33 @@
     opacity: 0.8;
   }
 
+  .kiosco-footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    font-size: 13px;
+    color: #6c757d;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    line-height: 1.5;
+  }
+
+  .kiosco-footer p {
+    margin: 0;
+  }
+
+  .kiosco-footer a {
+    color: #007BFF;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+
+  .kiosco-footer a:hover{
+    text-decoration: underline;
+    color: #0056b3;
+  }
+
   @keyframes fadeInSlide {
     from {
       opacity: 0;
