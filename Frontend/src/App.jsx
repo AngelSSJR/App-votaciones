@@ -141,7 +141,8 @@
     };
 
     return (
-      <div className="kiosco-container">
+      
+      <>
         <button
           type="button"
           onClick={toggleModoOscuro}
@@ -150,7 +151,8 @@
           >
             {modoOscuro ? "Claro" : "Oscuro"}
           </button>
-
+      
+      <div className="kiosco-container"></div>
         <h1>Sistema de Votación Rápida</h1>
         <h3>Mesa #{NUMERO_MESA_KIOSCO}</h3>
 
@@ -247,6 +249,7 @@
           </p>
         </footer>
       </div>
+    
     );
   }
 
