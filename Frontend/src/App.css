@@ -178,4 +178,33 @@
     color: #ffffff;
   }
 
-  
+  body.dark-mode .btn-tema {
+    background: rgba(30, 30, 30, 0.9);
+    color: #ffffff;
+    border-color: #444;
+    box-shadow: 0.4px rgba(0, 0, 0, 0.5);
+  }
+
+  body.dark-mode .input-dni {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border-color: #444;
+  }
+
+
+  body.dark-mode .tarjeta-eleccion {
+    background-color: #1e1e1e;
+    border-color: #333;
+  }
+
+
+  body.dark-mode .kiosco-footer {
+    border-color: #333;
+    color: #888;
+  }
+
+
+  body.dark-mode .mensaje-exito {
+    background-color: #13381e;
+    color: #7ce49b;
+  }
