@@ -152,7 +152,7 @@
             {modoOscuro ? "Claro" : "Oscuro"}
           </button>
       
-      <div className="kiosco-container"></div>
+      <div className="kiosco-container">
         <h1>Sistema de Votación Rápida</h1>
         <h3>Mesa #{NUMERO_MESA_KIOSCO}</h3>
 
@@ -249,7 +249,7 @@
           </p>
         </footer>
       </div>
-    
+    </>
     );
   }
 
