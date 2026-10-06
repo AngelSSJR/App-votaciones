@@ -137,40 +137,43 @@
     }
   }
 
-  .btn-tema {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    background: rgba(255, 255, 255, 0.9);
-    color: #333;
-    border: 1px solid #ccc;
-    border-radius: 30px;
-    padding: 8px 16px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(8px);
-    transition: all 0.3s ease;
-    z-index: 1000;
-  }
+/* Botón circular exclusivo para iconos en la esquina superior izquierda */
+.btn-tema {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%; /* Lo hace un círculo perfecto */
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
 
-  .btn-tema:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
-  }
+.btn-tema:hover {
+  transform: scale(1.1) rotate(15deg); /* Le da un giro sutil y crece al pasar el mouse */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
 
-  body {
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
+/* ☀️ MODO CLARO: Fondo blanco puro y transición suave */
+body {
+  background-color: #ffffff;
+  color: #333333;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-  body.dark-mode {
-    background-color: #121212;
-    color: #e0e0e0;
-  }
+/* 🌙 MODO OSCURO */
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
 
   body.dark-mode h1,
   body.dark-mode h2,
