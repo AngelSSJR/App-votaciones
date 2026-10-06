@@ -149,7 +149,7 @@
           className="btn-tema"
           title={modoOscuro ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
           >
-            {modoOscuro ? "Claro" : "Oscuro"}
+            {modoOscuro ? "☀️" : "🌙"}
           </button>
       
       <div className="kiosco-container">
