@@ -162,25 +162,48 @@
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
-/* ☀️ MODO CLARO: Fondo blanco puro y transición suave */
+/* ☀️ MODO CLARO: Fondo blanco puro y letras oscuras de alto contraste */
 body {
   background-color: #ffffff;
-  color: #333333;
+  color: #212529;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* 🌙 MODO OSCURO */
+/* Títulos nítidos en modo claro */
+.kiosco-container h1,
+.kiosco-container h2,
+.kiosco-container h3 {
+  color: #111827; /* Negro intenso */
+}
+
+/* Párrafos legibles en modo claro */
+.kiosco-container p {
+  color: #374151; /* Gris oscuro nítido */
+}
+
+.tarjeta-eleccion {
+  border: 1px solid #e5e7eb;
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 8px;
+  background-color: #ffffff;
+}
+
+/* 🌙 MODO OSCURO: Fondo negro y letras blancas */
 body.dark-mode {
   background-color: #121212;
   color: #e0e0e0;
 }
 
-  body.dark-mode h1,
-  body.dark-mode h2,
-  body.dark-mode h3 {
-    color: #ffffff;
-  }
+body.dark-mode .kiosco-container h1,
+body.dark-mode .kiosco-container h2,
+body.dark-mode .kiosco-container h3 {
+  color: #ffffff;
+}
 
+body.dark-mode .kiosco-container p {
+  color: #d1d5db;
+}
   body.dark-mode .btn-tema {
     background: rgba(30, 30, 30, 0.9);
     color: #ffffff;
