@@ -21,13 +21,57 @@
     animation: fadeInSlide 0.6s ease-out forwards;
   }
 
-  .input-dni {
-    padding: 15px;
-    font-size: 18px;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
+  /* Contenedor relativo para posicionar el icono */
+.input-dni-contenedor {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Icono de carnet DNI alineado a la izquierda */
+.icono-dni {
+  position: absolute;
+  left: 16px;
+  width: 24px;
+  height: 24px;
+  color: #6b7280;
+  pointer-events: none;
+  transition: color 0.3s ease;
+}
+
+/* Campo de texto con espacio para no tapar el icono */
+.input-dni {
+  width: 100%;
+  padding: 16px 16px 16px 52px; /* 52px a la izquierda para dejar espacio al icono */
+  font-size: 18px;
+  border: 2px solid #d1d5db;
+  border-radius: 12px;
+  background-color: #ffffff;
+  color: #111827;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+/* Efecto de foco cuando el usuario hace clic para escribir */
+.input-dni:focus {
+  border-color: #007BFF;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.15);
+}
+
+.input-dni-contenedor:focus-within .icono-dni {
+  color: #007BFF; /* El icono se ilumina de azul al escribir */
+}
+
+/* 🌙 Icono en modo oscuro */
+body.dark-mode .icono-dni {
+  color: #9ca3af;
+}
+
+body.dark-mode .input-dni-contenedor:focus-within .icono-dni {
+  color: #3b82f6;
+}
 
   .btn-continuar {
     padding: 16px 32px;
