@@ -221,18 +221,32 @@
                   <h3>{eleccion.titulo}</h3>
                   <p>{eleccion.descripcion}</p>
 
-                  <div className="contenedor-opciones">
+                  {/* 👇 Contenedor de Cards con Foto del Candidato */}
+                  <div className="contenedor-candidatos">
                     {eleccion.opciones.map((opcion) => (
-                      <button
-                        key={opcion.id}
-                        onClick={() => emitirVoto(opcion.id)}
-                        className="btn-votar"
-                        disabled={cargando}
-                      >
-                        {cargando
-                          ? "Procesando..."
-                          : `Votar por: ${opcion.texto}`}
-                      </button>
+                      <div key={opcion.id} className="card-candidato">
+                        <div className="candidato-img-contenedor">
+                          <img
+                            src={
+                              opcion.imagen ||
+                              `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                                opcion.texto
+                              )}&background=007bff&color=fff&size=150&bold=true`
+                            }
+                            alt={opcion.texto}
+                            className="candidato-img"
+                          />
+                        </div>
+                        <h4 className="candidato-nombre">{opcion.texto}</h4>
+                        <button
+                          type="button"
+                          onClick={() => emitirVoto(opcion.id)}
+                          className="btn-votar-card"
+                          disabled={cargando}
+                        >
+                          {cargando ? "Votando..." : "Votar"}
+                        </button>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -251,13 +265,18 @@
           </div>
         )}
 
+                {/* 👇 Ventanita emergente de confirmación de éxito */}
         {fase === 3 && (
-          <div className="mensaje-exito">
-            <h2>¡Voto registrado exitosamente!</h2>
-            <p>Gracias por participar.</p>
-            <p className="texto-reinicio">
-              Preparando sistema para el siguiente elector...
-            </p>
+          <div className="modal-overlay">
+            <div className="modal-confirmacion">
+              <div className="modal-icono-exito">✓</div>
+              <h2>¡Su voto fue un éxito!</h2>
+              <p>Gracias por ejercer su derecho al voto.</p>
+              <div className="modal-barra-progreso"></div>
+              <p className="texto-reinicio">
+                Preparando sistema para el siguiente elector...
+              </p>
+            </div>
           </div>
         )}
         <footer className="kiosco-footer">
