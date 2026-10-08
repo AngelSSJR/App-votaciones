@@ -278,3 +278,175 @@ body.dark-mode .kiosco-container p {
     background-color: #13381e;
     color: #7ce49b;
   }
+
+  /* =========================================
+   CARDS DE CANDIDATOS
+========================================= */
+.contenedor-candidatos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.card-candidato {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 20px;
+  width: 170px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.card-candidato:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  border-color: #007bff;
+}
+
+.candidato-img-contenedor {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #e0e7ff;
+  margin-bottom: 12px;
+}
+
+.candidato-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.candidato-nombre {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 15px 0;
+  color: #111827;
+  text-align: center;
+}
+
+.btn-votar-card {
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  background-color: #28a745;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-votar-card:hover {
+  background-color: #218838;
+  transform: scale(1.03);
+}
+
+/* =========================================
+   VENTANITA EMERGENTE (MODAL DE CONFIRMACIÓN)
+========================================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  animation: fadeInModal 0.3s ease;
+}
+
+.modal-confirmacion {
+  background: #ffffff;
+  padding: 35px 30px;
+  border-radius: 20px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  animation: popInModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-confirmacion h2 {
+  color: #111827;
+  margin: 15px 0 8px 0;
+}
+
+.modal-confirmacion p {
+  color: #4b5563;
+  margin-bottom: 20px;
+}
+
+.modal-icono-exito {
+  width: 65px;
+  height: 65px;
+  background-color: #28a745;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: bold;
+  margin: 0 auto;
+  box-shadow: 0 6px 16px rgba(40, 167, 69, 0.35);
+}
+
+.modal-barra-progreso {
+  height: 4px;
+  background: #28a745;
+  border-radius: 2px;
+  margin: 15px auto;
+  width: 100%;
+  animation: cuentaRegresiva 3s linear forwards;
+}
+
+@keyframes cuentaRegresiva {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popInModal {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* 🌙 MODO OSCURO PARA CARDS Y MODAL */
+body.dark-mode .card-candidato {
+  background: #1e1e1e;
+  border-color: #333333;
+}
+
+body.dark-mode .card-candidato:hover {
+  border-color: #3b82f6;
+}
+
+body.dark-mode .candidato-nombre {
+  color: #f3f4f6;
+}
+
+body.dark-mode .modal-confirmacion {
+  background: #1e1e1e;
+}
+
+body.dark-mode .modal-confirmacion h2 {
+  color: #ffffff;
+}
+
+body.dark-mode .modal-confirmacion p {
+  color: #9ca3af;
+}
