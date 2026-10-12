@@ -90,6 +90,8 @@ def login():
         cur.close()
 
 
+
+
 # ----------------- VOTACIONES Y CANDIDATOS -----------------
 @app.route('/api/votaciones', methods=['GET'])
 def listar_votaciones():
