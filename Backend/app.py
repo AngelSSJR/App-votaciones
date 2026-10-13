@@ -89,8 +89,46 @@ def login():
     finally:
         cur.close()
 
+@app.route('/api/admin/login', methods=['POST'])
+def admin_login():
+    data = request.json or {}
+    usuario = data.get('usuario')
+    password = data.get('password')
 
+    # 1. Credencial maestra de administrador (útil para desarrollo y pruebas rápidas)
+    if usuario == 'admin' and password == 'admin123':
+        return jsonify({
+            "mensaje": "Bienvenido Administrador",
+            "admin": {
+                "id": 1,
+                "nombre": "Administrador Principal",
+                "usuario": "admin",
+                "rol": "SuperAdmin"
+            }
+        }), 200
 
+    # 2. O validar contra la base de datos (por si registras un admin por DNI)
+    cur = mysql.connection.cursor()
+    try:
+        cur.execute("SELECT id, dni, nombre, password FROM usuarios WHERE dni = %s", (usuario,))
+        user = cur.fetchone()
+
+        if user and check_password_hash(user['password'], password):
+            return jsonify({
+                "mensaje": "Bienvenido",
+                "admin": {
+                    "id": user['id'],
+                    "nombre": user['nombre'],
+                    "usuario": user['dni'],
+                    "rol": "Admin"
+                }
+            }), 200
+            
+        return jsonify({"error": "Usuario o contraseña incorrectos"}), 401
+    except Exception as e:
+        return jsonify({"error": "Error interno del servidor", "detalle": str(e)}), 500
+    finally:
+        cur.close()
 
 # ----------------- VOTACIONES Y CANDIDATOS -----------------
 @app.route('/api/votaciones', methods=['GET'])
