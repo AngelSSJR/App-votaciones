@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import './App.css'
 
 function App() {
@@ -7,19 +7,17 @@ function App() {
   const [verPassword, setVerPassword] = useState(false)
   const [cargando, setCargando] = useState(false)
   const [error, setError] = useState('')
-  const [adminSession, setAdminSession] = useState(null)
-
-  // Cargar sesión guardada si existe
-  useEffect(() => {
-    const sesionGuardada = localStorage.getItem('admin_session')
-    if (sesionGuardada) {
-      try {
-        setAdminSession(JSON.parse(sesionGuardada))
-      } catch (e) {
-        localStorage.removeItem('admin_session')
-      }
+  
+  // Cargar sesión guardada directamente en el estado inicial
+  const [adminSession, setAdminSession] = useState(() => {
+    try {
+      const sesionGuardada = localStorage.getItem('admin_session')
+      return sesionGuardada ? JSON.parse(sesionGuardada) : null
+    } catch {
+      localStorage.removeItem('admin_session')
+      return null
     }
-  }, [])
+  })
 
   const handleSubmit = async (e) => {
     e.preventDefault()
