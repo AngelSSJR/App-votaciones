@@ -159,17 +159,7 @@
   cursor: not-allowed;
 }
 
-/* Pista de desarrollo */
-.dev-credentials-hint {
-  margin-top: 24px;
-  padding: 10px;
-  background: #0d1322;
-  border: 1px dashed #24314c;
-  border-radius: 8px;
-  text-align: center;
-  font-size: 0.8rem;
-  color: #94a3b8;
-}
+
 
 .dev-credentials-hint code {
   color: #60a5fa;

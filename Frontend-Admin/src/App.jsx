@@ -168,11 +168,7 @@ function App() {
           </button>
         </form>
 
-        {/* Pista de desarrollo */}
-        <div className="dev-credentials-hint">
-          <p>🔑 Acceso de desarrollo:</p>
-          <code>admin / admin123</code>
-        </div>
+        
       </div>
     </div>
   )
