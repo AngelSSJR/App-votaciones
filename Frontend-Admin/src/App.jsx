@@ -7,6 +7,9 @@ function App() {
   const [verPassword, setVerPassword] = useState(false)
   const [cargando, setCargando] = useState(false)
   const [error, setError] = useState('')
+
+  const [menuUsuarioAbierto, setMenuUsuarioAbierto] = useState(false)
+  const [modalCuentaAbierto, setModalCuentaAbierto] = useState(false)
   
   // Cargar sesión guardada directamente en el estado inicial
   const [adminSession, setAdminSession] = useState(() => {
