@@ -62,29 +62,178 @@ function App() {
     setPassword('')
   }
 
-  // Si ya inició sesión, mostramos la vista temporal para preparar el Navbar y Sidebar
+    // Si ya inició sesión, mostramos el Panel con el Navbar
   if (adminSession) {
     return (
-      <div className="admin-dashboard-temp">
-        <header className="temp-header">
-          <div className="temp-brand">
-            <span className="temp-icon">🛡️</span>
-            <h2>Panel Electoral</h2>
+      <div className="admin-layout">
+        {/* Navbar Superior */}
+        <header className="admin-navbar">
+          <div className="navbar-left">
+            <span className="navbar-logo-icon">🛡️</span>
+            <div className="navbar-brand-text">
+              <span className="navbar-title">Sistema Electoral</span>
+              <span className="navbar-subtitle">Panel de Control</span>
+            </div>
           </div>
-          <div className="temp-user-info">
-            <span className="temp-badge">{adminSession.rol}</span>
-            <span className="temp-name">{adminSession.nombre}</span>
-            <button className="btn-logout" onClick={handleLogout}>Cerrar Sesión</button>
+
+          <div className="navbar-right">
+            {/* Menú de Usuario a la derecha */}
+            <div className="user-menu-container">
+              <button
+                className={`user-profile-btn ${menuUsuarioAbierto ? 'active' : ''}`}
+                onClick={() => setMenuUsuarioAbierto(!menuUsuarioAbierto)}
+                aria-expanded={menuUsuarioAbierto}
+              >
+                <div className="user-avatar-circle">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                </div>
+                <div className="user-profile-meta">
+                  <span className="user-profile-name">{adminSession.nombre}</span>
+                  <span className="user-profile-role">{adminSession.rol}</span>
+                </div>
+                <svg
+                  className={`chevron-icon ${menuUsuarioAbierto ? 'rotated' : ''}`}
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+
+              {/* Fondo invisible para cerrar el menú si hace clic afuera */}
+              {menuUsuarioAbierto && (
+                <div
+                  className="dropdown-backdrop"
+                  onClick={() => setMenuUsuarioAbierto(false)}
+                />
+              )}
+
+              {/* Menú Desplegable */}
+              {menuUsuarioAbierto && (
+                <div className="user-dropdown-menu">
+                  <div className="dropdown-user-header">
+                    <p className="dropdown-name">{adminSession.nombre}</p>
+                    <p className="dropdown-username">@{adminSession.usuario}</p>
+                    <span className="dropdown-role-pill">{adminSession.rol}</span>
+                  </div>
+
+                  <div className="dropdown-divider" />
+
+                  {/* Opción 1: Mi Cuenta */}
+                  <button
+                    className="dropdown-item"
+                    onClick={() => {
+                      setMenuUsuarioAbierto(false)
+                      setModalCuentaAbierto(true)
+                    }}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    <span>Mi Cuenta</span>
+                  </button>
+
+                  {/* Opción 2: Cerrar Sesión */}
+                  <button
+                    className="dropdown-item item-logout"
+                    onClick={() => {
+                      setMenuUsuarioAbierto(false)
+                      handleLogout()
+                    }}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                      <polyline points="16 17 21 12 16 7" />
+                      <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    <span>Cerrar Sesión</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
-        <main className="temp-main">
-          <div className="temp-card">
-            <div className="temp-success-badge">✅ Sesión iniciada con éxito</div>
-            <h3>¡Bienvenido, {adminSession.nombre}!</h3>
-            <p>Ya tenemos la autenticación y la sesión conectada con el Backend.</p>
-            <div className="next-step-hint">
-              <strong>Siguiente paso:</strong> Construir el <strong>Navbar</strong> y el <strong>Sidebar desplegable</strong> para gestionar elecciones, candidatos y mesas.
+        {/* Modal "Mi Cuenta" */}
+        {modalCuentaAbierto && (
+          <div className="modal-overlay" onClick={() => setModalCuentaAbierto(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <div className="modal-title-wrap">
+                  <span className="modal-icon-badge">👤</span>
+                  <h3>Mi Cuenta</h3>
+                </div>
+                <button
+                  className="modal-close-btn"
+                  onClick={() => setModalCuentaAbierto(false)}
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="modal-body">
+                <div className="account-avatar-large">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                </div>
+
+                <div className="account-details-grid">
+                  <div className="account-detail-item">
+                    <span className="detail-label">Nombre</span>
+                    <span className="detail-value">{adminSession.nombre}</span>
+                  </div>
+
+                  <div className="account-detail-item">
+                    <span className="detail-label">Usuario</span>
+                    <span className="detail-value">{adminSession.usuario}</span>
+                  </div>
+
+                  <div className="account-detail-item">
+                    <span className="detail-label">Rol del Sistema</span>
+                    <span className="detail-badge-role">{adminSession.rol}</span>
+                  </div>
+
+                  <div className="account-detail-item">
+                    <span className="detail-label">Estado</span>
+                    <span className="detail-badge-active">● Conectado</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-footer">
+                <button
+                  className="btn-modal-close"
+                  onClick={() => setModalCuentaAbierto(false)}
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Área central donde luego pondremos el Sidebar y las Vistas */}
+        <main className="admin-content">
+          <div className="content-welcome-card">
+            <div className="welcome-tag">✅ Navbar Activo</div>
+            <h2>Bienvenido, {adminSession.nombre}</h2>
+            <p>
+              Prueba hacer clic en tu foto/usuario arriba a la derecha para ver el menú desplegable con <strong>"Mi Cuenta"</strong> y <strong>"Cerrar Sesión"</strong>.
+            </p>
+            <div className="sidebar-hint">
+              <strong>Siguiente paso:</strong> Construir el <strong>Sidebar lateral desplegable</strong> para navegar entre Elecciones, Candidatos y Mesas.
             </div>
           </div>
         </main>
